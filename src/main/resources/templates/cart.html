@@ -1,12 +1,5 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <!-- Incluez ici vos balises meta, title, stylesheets, etc. -->
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-</head>
-<body>
+<div th:fragment="cart">
 
-<!-- Votre code Thymeleaf pour le panier -->
 <div data-dial-init class="fixed right-6 bottom-6 group">
   <button type="button" onClick="afficherPanier()" data-dial-toggle="speed-dial-menu-dropdown-alternative-square"
           aria-controls="speed-dial-menu-dropdown-alternative-square" aria-expanded="false"
@@ -18,8 +11,7 @@
 </div>
 
 <!-- Fenêtre modale pour le panier -->
-<div class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-20" style="display: none;" id="resume"
-     th:classappend="${#lists.isNotEmpty(panier.contenu) ? 'flex' : 'hidden'}">
+<div class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-20" style="display: none;" id="resume">
   <section class="fixed justify-center px-4 text-gray-600 antialiased " x-data="app">
     <div class="flex h-full flex-col justify-center">
       <!-- Table -->
@@ -34,9 +26,61 @@
 
         <div class="overflow-x-auto p-3">
           <table class="w-full table-auto">
-            <!-- Votre code pour afficher le contenu du panier -->
+            <thead class="bg-gray-50 text-xs font-semibold uppercase text-gray-400">
+            <tr>
+              <th></th>
+              <th class="p-2">
+                <div class="text-left font-semibold">Produit</div>
+              </th>
+              <th class="p-2">
+                <div class="text-left font-semibold">Pointure</div>
+              </th>
+              <th class="p-2">
+                <div class="text-left font-semibold">Quantite</div>
+              </th>
+              <th class="p-2">
+                <div class="text-left font-semibold">Total</div>
+              </th>
+              <th class="p-2">
+                <div class="text-center font-semibold"></div>
+              </th>
+            </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-100 text-sm">
+            <!-- Loop through panier items -->
+            <tr th:each="item : ${panierItems}" th:id="${item.idVariante}">
+              <td class="p-2">
+                <img class="h-10 w-10 rounded-xl" th:src="${item.urlPicture}" alt="Product Image"/>
+              </td>
+              <td class="p-2">
+                <div class="font-medium text-gray-800" th:text="${item.nom}"></div>
+              </td>
+              <td class="p-2">
+                <div class="text-left" th:text="${item.pointure}"></div>
+              </td>
+              <td class="p-2">
+                <div class="text-left" th:text="${item.quantite}"></div>
+              </td>
+              <td class="p-2">
+                <div class="text-left font-medium text-gray-900 font-bold" th:text="${item.prix} + ' Euros'"></div>
+              </td>
+              <td class="p-2">
+                <div class="flex justify-center">
+                  <button th:onclick="'retirerDuPanier(' + ${item.idVariante} + ')'" class="hover:bg-gray-100 hover:text-blue-600">
+                    <svg class="h-8 w-8 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
           </table>
         </div>
+
+
+
 
         <div class="flex justify-end space-x-4 border-t border-gray-100 px-5 py-4 text-2xl font-bold">
           <a href="panier.html">
@@ -55,8 +99,45 @@
 </div>
 
 <script>
-  // Votre code JavaScript ici
+  function afficherPanier() {
+    document.getElementById("resume").style.display = "flex";
+  }
+
+
+  function masquerPanier() {
+    document.getElementById("resume").style.display = "none";
+  }
+
+
+  function retirerDuPanier(idVariante) {
+    var element = document.getElementById(idVariante);
+    if (element) {
+      element.remove();
+
+      fetch('/removeFromCart/' + idVariante, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'same-origin' // Inclure si votre application Spring Boot est sur un domaine différent
+      })
+              .then(response => {
+                console.log("Code d'état HTTP : " + response.status);
+                if (response.ok) {
+                  console.log("Action effectuée avec succès");
+                } else {
+                  console.log("Erreur inconnue : Code d'état " + response.status);
+                }
+              })
+              .catch(error => {
+                console.error('Erreur lors de la requête fetch:', error);
+              });
+    }
+  }
+
 </script>
 
 </body>
 </html>
+</div>
