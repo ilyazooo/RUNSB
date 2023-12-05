@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run</title>
+    <link href="https://unpkg.com/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="min-h-screen bg-gray-500 flex justify-center items-center relative overflow-hidden">
+    <div class="absolute w-60 h-60 rounded-xl bg-gray-900 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div>
+    <div class="absolute w-48 h-48 rounded-xl bg-gray-900 -bottom-6 -right-10 transform rotate-12 hidden md:block"></div>
+    <div class="py-8 px-8 bg-white rounded-2xl shadow-xl z-20">
+
+        <div class="flex items-center justify-between mb-4">
+            <h5 class="text-xl font-bold leading-none text-black">Commande confirmé ! Récapitulatif de votre commande :</h5>
+        </div>
+        <div class="flow-root">
+            <ul role="list" class="divide-y divide-gray-700">
+
+                <li th:each="panierItem : ${panierItems}" class="py-3 sm:py-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0">
+                            <img class="w-8 h-8 rounded-xl" th:src="${panierItem.urlPicture}" alt="S9"/>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold truncate text-black" th:text="${panierItem.nom}"></p>
+                            <p class="text-sm truncate text-black" th:text="'Pointure : ' + ${panierItem.pointure + ', QTE : ' + panierItem.quantite}"></p>
+                        </div>
+                        <div class="inline-flex items-center text-base font-semibold text-black" th:text="${panierItem.prix + ' Euros'}"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="inline-flex items-center text-base font-semibold text-black" th:text="${'Prix total : ' + totalCommande + ' Euros'}"></div>
+        <p></p>
+        <a th:href="profil" class="text-center mt-10">
+            <button class="py-3 w-64 text-xl text-white bg-gray-900 font-semibold rounded-2xl">Voir mes commandes</button>
+        </a>
+    </div>
+    <div class="w-40 h-40 absolute bg-gray-900 rounded-full top-0 right-12 hidden md:block"></div>
+    <div class="w-20 h-40 absolute bg-gray-900 rounded-full bottom-20 left-10 transform rotate-45 hidden md:block"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run</title>
+    <link href="https://unpkg.com/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Inclure le header -->
+<div th:replace="header :: header"></div>
+
+<div>
+    <div class="justify-center items-center pt-24 bg-white px-2 pt-48">
+
+        <h1 class="mb-9 flex justify-center items-center text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl text-white">Votre panier</h1>
+
+        <div class="flex justify-center items-center pt-20 pr-11 mx-auto grid max-w-6xl grid-cols-1 gap-4 p-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
+
+            <div class="w-full max-w-md p-4 border rounded-lg shadow sm:p-8 bg-gray-800 border-gray-700 shadow-lg hover:shadow-xl hover:transform hover:scale-105 duration-300">
+
+
+                <div th:if="${panier != null and panier.tailleDuPanier ne 0}">
+                    <div class="flex items-center justify-between mb-4">
+                        <h5 class="text-xl font-bold leading-none text-white">Produits</h5>
+                    </div>
+                    <div class="flow-root">
+                        <ul role="list" class="divide-y divide-gray-700">
+
+                            <li th:each="panierItem : ${panierItems}" class="py-3 sm:py-4">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-shrink-0">
+                                        <img class="w-8 h-8 rounded-xl" th:src="${panierItem.urlPicture}" alt="S9"/>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-semibold truncate text-white" th:text="${panierItem.nom}"></p>
+                                        <p class="text-sm truncate text-gray-400" th:text="'Pointure : ' + ${panierItem.pointure + ', QTE : ' + panierItem.quantite}"></p>
+                                    </div>
+                                    <div class="inline-flex items-center text-base font-semibold text-white" th:text="${panierItem.prix + ' Euros'}"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Buttons for order and clear cart -->
+                    <div class="flex justify-center items-center">
+                        <button th:if="${isConnected}" onclick="validerPanier()"
+                                class="m-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
+                            Commander
+                        </button>
+                        <button onclick="viderPanier()"
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ">Supprimer
+                            le panier
+                        </button>
+                    </div>
+                </div>
+
+                <div th:if="${panier.tailleDuPanier eq 0}">
+                    <div class="flow-root">
+                        <h1 class="text-white">Votre panier est vide!</h1>
+                    </div>
+                    <div class="flex justify-center items-center">
+                        <a th:href="@{/catalogue}">
+                            <button class="mt-6 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ">Découvrir
+                                le catalogue
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${isConnected}">
+                <div class="w-full max-w-md p-4 border rounded-lg shadow sm:p-8 bg-gray-800 border-gray-700 shadow-lg hover:shadow-xl hover:transform hover:scale-105 duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <h5 class="text-xl font-bold leading-none text-white">Informations personnelles</h5>
+                    </div>
+                    <div class="flow-root text-white">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium truncate text-white" th:text="${client.nom + ' ' + client.prenom}"></p>
+                            <p class="text-sm truncate text-gray-400" th:text="'E-mail : ' + ${client.email}"></p>
+                            <p class="text-sm truncate text-gray-400" th:text="'ID : ' + ${client.id}"></p>
+                            <p class="text-sm truncate text-gray-400" th:text="'Solde fidélité : ' + ${client.soldeFidelite}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${!isConnected}">
+                <div class="w-full max-w-md p-4 border rounded-lg shadow sm:p-8 bg-gray-800 border-gray-700 shadow-lg hover:shadow-xl hover:transform hover:scale-105 duration-300">
+                    <div class="flex items-center justify-between mb-4"></div>
+                    <div class="flow-root">
+                        <h1 class="text-white">Informations indisponibles. Veuillez vous connecter</h1>
+                    </div>
+                    <div class="flex justify-center items-center">
+                        <a th:href="@{/login}">
+                            <button class="mt-6 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ">Se connecter
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    function goToConnexion() {
+        window.location.href = '/login';
+    }
+
+    function validerPanier() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/creerCommande', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                window.location.href = '/confirmationCommande';
+            } else {
+                console.error('Erreur lors de la suppression du panier');
+            }
+        };
+        xhr.send();
+
+
+    }
+
+    function viderPanier() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/viderPanier', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                location.reload();
+            } else {
+                console.error('Erreur lors de la suppression du panier');
+            }
+        };
+        xhr.send();
+    }
+
+
+</script>
+
+</body>
+</html>

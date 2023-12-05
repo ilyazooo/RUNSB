@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run</title>
+    <link href="https://unpkg.com/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="header :: header"></div>
+
+<div class="justify-center items-center pt-48 bg-white px-2">
+
+    <h1 class="mb-9 flex justify-center items-center text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl text-black">Votre profil</h1>
+
+    <section class="py-10 bg-white">
+        <div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 p-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 ">
+
+            <div>
+                <div class="w-full max-w-md p-4 border rounded-lg shadow sm:p-8 bg-gray-800 border-gray-700 shadow-lg hover:shadow-xl hover:transform hover:scale-105 duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <h5 class="text-xl font-bold leading-none text-white">Vos informations personnelles</h5>
+                    </div>
+                    <div class="flow-root text-white">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium truncate text-white">
+                                [[${client.nom}]] [[${client.prenom}]]
+                            </p>
+                            <p class="text-sm truncate text-gray-400">
+                                E-mail : [[${client.email}]]
+                            </p>
+                            <p class="text-sm truncate text-gray-400">
+                                ID client : [[${client.id}]]
+                            </p>
+                            <p class="text-sm truncate text-gray-400">
+                                Solde fidelite : [[${client.soldeFidelite}]]
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full max-w-md p-4 border rounded-lg shadow sm:p-8 bg-gray-800 border-gray-700 shadow-lg hover:shadow-xl hover:transform hover:scale-105 duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <h5 class="text-xl font-bold leading-none text-white">Vos derniers achats</h5>
+                </div>
+                <div class="flow-root">
+                    <ul role="list" class="divide-y divide-gray-700">
+                        <li th:each="commande : ${commandes}" class="p-2">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0">
+                                    <img class="w-8 h-8 rounded-xl" th:src="${commande.urlPicture}" alt="S9"/>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium truncate text-white" th:text="${commande.nom}"></p>
+                                    <p class="text-sm truncate text-gray-400" th:text="'Pointure: ' + ${commande.pointure + ', QTE: ' + commande.quantite}"></p>
+                                    <p class="text-sm truncate text-gray-400" th:text="'Statut: ' + ${commande.statut}"></p>
+                                    <p class="text-sm truncate text-gray-400" th:text="'Numero de commande: ' + ${commande.idCommande}"></p>
+                                </div>
+                                <div class="inline-flex items-center text-base font-semibold text-red-600"
+                                     th:text="'-' + ${commande.prix} + ' Euros'"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+</body>
+</html>
