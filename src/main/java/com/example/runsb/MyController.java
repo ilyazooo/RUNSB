@@ -202,6 +202,79 @@ public class MyController {
         return "panier";
     }
 
+    @GetMapping("/AdminLogin")
+    public String AdminLogin(){
+
+
+        return "admin-login";
+    }
+
+    @GetMapping("/admin-interface")
+    public String AdminInterface(Model model,
+                                 HttpSession session){
+
+        Object obj = session.getAttribute("modLoggedIn");
+
+        boolean ajouterProduit = true;
+        boolean supprimerProduit = true;
+        boolean modifierProduit = true;
+        if (obj != null && obj instanceof Moderateur) {
+            Moderateur modConnecte = (Moderateur) obj;
+            ajouterProduit = modConnecte.isAjouterProduit();
+            supprimerProduit = modConnecte.isSupprimerProduit();
+            modifierProduit = modConnecte.isModifierProduit();
+        }
+
+        DataBaseController controller = new DataBaseController();
+
+        List<Produit> catalogue = controller.getCatalogue();
+
+        List<Moderateur> moderateurs = controller.getModerateurs();
+
+        model.addAttribute("adminLoggedIn", isAdminConnected(session));
+        model.addAttribute("ajouterProduit", supprimerProduit);
+        model.addAttribute("supprimerProduit", supprimerProduit);
+        model.addAttribute("modifierProduit", modifierProduit);
+
+
+
+        return "admin-interface";
+    }
+
+    @PostMapping("/loginAdminForm")
+    public String loginAdminForm(
+            @RequestParam String email,
+            @RequestParam String motDePasse,
+            Model model,
+            HttpSession session
+    ) throws SQLException {
+        DataBaseController controller = new DataBaseController();
+
+        if (controller.checkAdminCredentials(email, motDePasse)) {
+            session.setAttribute("adminLoggedIn", true);
+        } else if (controller.checkModeratorCredentials(email, motDePasse)) {
+            Moderateur modConnecte = controller.getModeratorByEmail(email);
+            session.setAttribute("modLoggedIn", modConnecte);
+        } else {
+
+            model.addAttribute("erreur", "L'authentification a échoué");
+            return "admin-login";
+        }
+
+        return "redirect:/admin-interface";
+
+    }
+
+    private boolean isAdminConnected(HttpSession session) {
+        return session.getAttribute("adminLoggedIn") != null;
+    }
+
+
+    private boolean isModConnected(HttpSession session) {
+        return session.getAttribute("modLoggedIn") != null;
+    }
+
+
 
     @PostMapping("/loginForm")
     public String loginForm(
