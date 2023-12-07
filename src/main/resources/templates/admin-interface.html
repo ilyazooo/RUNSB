@@ -39,7 +39,7 @@
                             <path d="M9.546.5a9.5 9.5 0 1 0 9.5 9.5 9.51 9.51 0 0 0-9.5-9.5ZM13.788 11h-3.242v3.242a1 1 0 1 1-2 0V11H5.304a1 1 0 0 1 0-2h3.242V5.758a1 1 0 0 1 2 0V9h3.242a1 1 0 1 1 0 2Z"/>
                         </svg>
                     </div>
-                    Ajouter Produit
+                    Ajouter
                 </a>
             </div>
             <div th:if="${supprimerProduit}">
@@ -118,7 +118,7 @@
             </a>
         </div>
 
-        <div th:onclick="|logout()|" role="button" tabindex="0"
+        <div id="Logout" role="button" tabindex="0"
              class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none">
             <div class="grid place-items-center mr-4">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
@@ -133,6 +133,201 @@
 
 
     </nav>
+
+</div>
+
+<div class="flex items-center justify-center h-screen w-screen bg-gray-500 relative overflow-hidden">
+    <div class="absolute w-60 h-60 rounded-xl bg-gray-900 -top-5 left-44 z-0 transform rotate-45 hidden md:block"></div>
+    <div class="absolute w-48 h-48 rounded-xl bg-gray-900 -bottom-6 -right-10 z-0 transform rotate-12 hidden md:block"></div>
+    <div id="div1" class="content text-center ml-24 z-10 opacity-0 transition-opacity duration-500">
+        <img src="https://i.ibb.co/JtpTTFt/run-black.png" class="h-42 mr-3" alt="Run Logo">
+    </div>
+
+    <div id="div2" class="content hidden opacity-0 z-10 transition-opacity duration-500 max-w-xl w-full mt-18 ml-32">
+        <form th:action="@{/AddProductForm}" method="post" class="rounded-md mx-auto bg-white p-8 shadow-md grid grid-cols-2 gap-4">
+            <div class="col-span-2 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Ajouter un Produit</h2>
+            </div>
+            <div class="mb-6">
+                <label for="nom" class="block text-gray-700 text-sm font-bold mb-2">Nom du Produit</label>
+                <input type="text" id="nom" name="nom" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+            <div class="mb-6">
+                <label for="prix" class="block text-gray-700 text-sm font-bold mb-2">Prix du Produit</label>
+                <input type="number" id="prix" name="prix" min="0" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+            <div class="mb-6">
+                <label for="marque" class="block text-gray-700 text-sm font-bold mb-2">Marque du Produit</label>
+                <input type="text" id="marque" name="marque" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+            <div class="mb-6 col-span-1">
+                <label for="urlPicture" class="block text-gray-700 text-sm font-bold mb-2">Lien de l'Image du Produit</label>
+                <input type="url" id="urlPicture" name="urlPicture" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+            <div class="mb-6">
+                <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                <textarea id="description" name="description" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required></textarea>
+            </div>
+            <div class="mb-6 col-span-1">
+                <label for="motsCles" class="block text-gray-700 text-sm font-bold mb-2">Mots Clés</label>
+                <input type="text" id="motsCles" name="motsCles" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+            <div class="col-span-2">
+                <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded-md">Ajouter le Produit</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="div3" class="content hidden opacity-0 z-10 transition-opacity duration-500 max-w-xl w-full mt-6 ml-24">
+        <form th:action="@{/DeleteProductForm}" method="post" class="rounded-md mx-auto bg-white p-8 shadow-md">
+            <h2 class="text-2xl font-bold mb-6">Supprimer un Produit</h2>
+            <div class="mb-6">
+                <label for="produitASupprimer" class="block text-gray-700 text-sm font-bold mb-2">Produit à Supprimer</label>
+                <select id="produitASupprimer" name="produitASupprimer" class="w-full h-1/4 px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+                    <option th:each="product : ${catalogue}" th:value="${product.id}" th:text="${product.nom}"></option>
+                </select>
+            </div>
+            <button type="submit" class="w-full bg-red-500 text-white p-3 rounded-md">Supprimer le Produit</button>
+        </form>
+    </div>
+
+    <div id="div4" class="content hidden opacity-0 z-10 transition-opacity duration-500 my-8 max-w-xl w-full mt-8 ml-24">
+        <form th:action="@{/EditProductForm}" method="post" id="editProductForm" class="rounded-md mx-auto bg-white p-8 shadow-md">
+            <h2 class="text-2xl font-bold mb-6">Modifier un Produit</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="mb-6">
+                    <label for="produitAModifier" class="block text-gray-700 text-sm font-bold mb-2">Produit à Modifier</label>
+                    <select th:onchange="chargerProduit()" id="produitAModifier" name="produitAModifier" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+                        <option value="" selected disabled>Sélectionnez un produit</option>
+                        <option th:each="product : ${catalogue}" th:value="${product.id}" th:text="${product.nom}"></option>
+                    </select>
+                </div>
+                <div class="mb-6">
+                    <label for="nomModif" class="block text-gray-700 text-sm font-bold mb-2">Nom du Produit</label>
+                    <input type="text" id="nomModif" name="nomModif" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="prixModif" class="block text-gray-700 text-sm font-bold mb-2">Prix du Produit</label>
+                    <input type="number" id="prixModif" name="prixModif" min="0" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="marqueModif" class="block text-gray-700 text-sm font-bold mb-2">Marque du Produit</label>
+                    <input type="text" id="marqueModif" name="marqueModif" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="mb-6">
+                    <label for="descriptionModif" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                    <textarea id="descriptionModif" name="descriptionModif" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="urlPictureModif" class="block text-gray-700 text-sm font-bold mb-2">URL de l'Image</label>
+                    <input type="url" id="urlPictureModif" name="urlPictureModif" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500">
+                </div>
+                <!--
+                <div class="mb-6">
+                    <label for="motsClesModif" class="block text-gray-700 text-sm font-bold mb-2">Mots Clés</label>
+                    <input type="text" id="motsClesModif" name="motsCles" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500">
+                </div>
+                -->
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded-md">Modifier le Produit</button>
+        </form>
+    </div>
+
+    <div id="div5" class="content hidden opacity-0 z-10 transition-opacity duration-500 max-w-xl w-full mt-18 ml-32">
+        <form th:action="@{/AddModeratorForm}" method="post" class="rounded-md mx-auto bg-white p-8 shadow-md grid grid-cols-2 gap-4">
+            <div class="col-span-2 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Ajouter un Modérateur</h2>
+            </div>
+            <div class="mb-6">
+                <label for="nomMod" class="block text-gray-700 text-sm font-bold mb-2">Nom</label>
+                <input type="text" id="nomMod" name="nomMod" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+            <div class="mb-6">
+                <label for="prenom" class="block text-gray-700 text-sm font-bold mb-2">Prénom</label>
+                <input type="text" id="prenom" name="prenom" min="0" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+            <div class="mb-6">
+                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                <input type="email" id="email" name="email" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+            <div class="mb-6 col-span-1">
+                <label for="motDePasse" class="block text-gray-700 text-sm font-bold mb-2">Mot de Passe</label>
+                <input type="password" id="motDePasse" name="motDePasse" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+            <div class="col-span-2 mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Droits du Modérateur</label>
+                <div class="flex space-x-4">
+                    <div>
+                        <input type="checkbox" id="ajoutProduit" name="ajoutProduit" class="form-checkbox" />
+                        <label for="ajoutProduit" class="ml-2">Ajouter produit</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="suppressionProduit" name="suppressionProduit" class="form-checkbox" />
+                        <label for="suppressionProduit" class="ml-2">Supprimer produit</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="modificationProduit" name="modificationProduit" class="form-checkbox" />
+                        <label for="modificationProduit" class="ml-2">Modifier produit</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-2">
+                <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded-md">Ajouter le Modérateur</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="div6" class="content hidden opacity-0 z-10 transition-opacity duration-500 my-8 max-w-xl w-full mt-6 ml-24">
+        <form th:action="@{/DeleteModeratorForm}" method="post" class="rounded-md mx-auto bg-white p-8 shadow-md">
+            <h2 class="text-2xl font-bold mb-6">Supprimer un Modérateur</h2>
+            <div class="mb-6">
+                <label for="moderateurASupprimer" class="block text-gray-700 text-sm font-bold mb-2">Modérateur à Supprimer</label>
+                <select id="moderateurASupprimer" name="moderateurASupprimer" class="w-full h-1/4 px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+
+                    <option th:each="moderateur : ${moderateurs}" th:value="${moderateur.id}" th:text="${moderateur.prenom} + ' ' + ${moderateur.nom}"></option>
+                </select>
+            </div>
+            <button type="submit" class="w-full bg-red-500 text-white p-3 rounded-md">Supprimer le Modérateur</button>
+        </form>
+    </div>
+
+    <div id="div7" class="content hidden opacity-0 z-10 transition-opacity duration-500 my-8 max-w-xl w-full mt-8 ml-24">
+        <form th:action="@{/EditModeratorForm}" method="post" id="editModeratorRightsForm" class="rounded-md mx-auto bg-white p-8 shadow-md">
+            <h2 class="text-2xl font-bold mb-6">Modifier les Permissions d'un Modérateur</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="mb-6">
+                    <label for="modAModifier" class="block text-gray-700 text-sm font-bold mb-2">Modérateur à Modifier</label>
+                    <select th:onchange="chargerModerateur()" id="modAModifier" name="modAModifier" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+
+                        <option value="" selected disabled>Sélectionnez un modérateur</option>
+                        <option th:each="moderateur : ${moderateurs}" th:value="${moderateur.id}" th:text="${moderateur.nom} + ' ' + ${moderateur.prenom}"></option>
+                    </select>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Droits du Modérateur</label>
+                    <div class="flex items-center space-x-4">
+                        <div>
+                            <input type="checkbox" id="ajoutProduitModif" name="droits[]" class="form-checkbox h-5 w-5 text-blue-500">
+                            <label for="ajoutProduitModif" class="text-gray-700">Ajouter Produit</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="suppressionProduitModif" name="droits[]" class="form-checkbox h-5 w-5 text-blue-500">
+                            <label for="suppressionProduitModif" class="text-gray-700">Supprimer Produit</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="modificationProduitModif" name="droits[]" class="form-checkbox h-5 w-5 text-blue-500">
+                            <label for="modificationProduitModif" class="text-gray-700">Modifier Produit</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-2">
+                <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded-md">Modifier les Droits</button>
+            </div>
+        </form>
+    </div>
+
+
 
 </div>
 
@@ -157,7 +352,7 @@
     }
 
     document.getElementById('Logout').addEventListener('click', function () {
-        window.location.href = 'AdminLogoutServlet';
+        window.location.href = 'AdminLogout';
     })
 
     showDiv('div1');
@@ -194,12 +389,13 @@
                     document.getElementById("urlPictureModif").value = produit.urlPicture;
                     //document.getElementById("motsClesModif").value = produit.motsCles;
                 } else {
-                    console.error("Erreur lors de la recuperation des détails du produit");
+                    console.error("Erreur lors de la récupération des détails du produit");
                 }
             }
         };
 
-        xhr.open("GET", "GetProductDetailsServlet?produitId=" + produitId, true);
+
+        xhr.open("GET", "/getProductDetails?productId=" + produitId, true);
         xhr.send();
     }
 
@@ -221,7 +417,7 @@
             }
         };
 
-        xhr.open("GET", "GetModeratorDetailsServlet?moderateurId=" + moderateurId, true);
+        xhr.open("GET", "getModeratorDetails?moderateurId=" + moderateurId, true);
         xhr.send();
     }
 

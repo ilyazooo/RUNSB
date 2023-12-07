@@ -2,12 +2,16 @@ package com.example.runsb;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +63,31 @@ public class MyController {
         model.addAttribute("catalogue", catalogue);
 
         return "catalogue";
+    }
+
+
+    @GetMapping("/recherche")
+    public String recherche(@RequestParam(name = "recherche", required = false) String motRecherche, Model model, HttpSession session) {
+
+        DataBaseController controller = new DataBaseController();
+
+        cartDependencies(model, session);
+
+        boolean isConnected = false;
+        Integer userID = (Integer) session.getAttribute("userID");
+        if (userID != null && userID != -1) {
+            isConnected = true;
+        }
+        model.addAttribute("isConnected", isConnected);
+
+        if (motRecherche != null && !motRecherche.isEmpty()) {
+
+            List<Produit> resultats = controller.getProductBySearch(motRecherche);
+            model.addAttribute("resultats", resultats);
+            model.addAttribute("motRecherche", motRecherche);
+        }
+
+        return "recherche";
     }
 
     @GetMapping("/produit")
@@ -213,6 +242,11 @@ public class MyController {
     public String AdminInterface(Model model,
                                  HttpSession session){
 
+        if (!isModConnected(session) && !isAdminConnected(session)){
+            return "redirect:/AdminLogin";
+        }
+
+
         Object obj = session.getAttribute("modLoggedIn");
 
         boolean ajouterProduit = true;
@@ -232,14 +266,247 @@ public class MyController {
         List<Moderateur> moderateurs = controller.getModerateurs();
 
         model.addAttribute("adminLoggedIn", isAdminConnected(session));
-        model.addAttribute("ajouterProduit", supprimerProduit);
+        model.addAttribute("ajouterProduit", ajouterProduit);
         model.addAttribute("supprimerProduit", supprimerProduit);
         model.addAttribute("modifierProduit", modifierProduit);
+        model.addAttribute("moderateurs", moderateurs);
+        model.addAttribute("catalogue", catalogue);
 
 
 
         return "admin-interface";
     }
+
+
+
+
+    @GetMapping("/getProductDetails")
+    public ResponseEntity<Produit> getProductDetails(@RequestParam("productId") String productId) {
+
+        int productIdNotString = Integer.parseInt(productId);
+        Produit produit = new DataBaseController().getProductById(productIdNotString);
+
+        if (produit != null) {
+            return new ResponseEntity<>(produit, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private String convertDroitsToJson(Moderateur moderateur) {
+        return String.format("{\"ajouterProduit\": " + moderateur.isAjouterProduit() + ", \"supprimerProduit\": " + moderateur.isSupprimerProduit() + ", \"modifierProduit\": " + moderateur.isModifierProduit() + "}");
+    }
+
+    @GetMapping("/getModeratorDetails")
+    public ResponseEntity<Moderateur> getModeratorDetails(@RequestParam("moderateurId") String moderateurId) {
+
+        int moderateurIdNotString = Integer.parseInt(moderateurId);
+        Moderateur moderateur = new DataBaseController().getModeratorById(moderateurIdNotString);
+
+        try {
+            return ResponseEntity.ok().body(moderateur);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PostMapping("/AddProductForm")
+    public String addProductForm(
+            @RequestParam("nom") String nom,
+            @RequestParam("prix") double prix,
+            @RequestParam("marque") String marque,
+            @RequestParam("description") String description,
+            @RequestParam("urlPicture") String urlPicture,
+            @RequestParam("motsCles") String motsCles,
+            Model model) {
+
+        boolean insertionReussie = new DataBaseController().insertProduit(nom, prix, marque, description, urlPicture, motsCles);
+
+        if (insertionReussie) {
+            model.addAttribute("status", "success");
+            model.addAttribute("message", "Produit ajouté avec succès");
+        } else {
+            model.addAttribute("status", "error");
+            model.addAttribute("message", "Erreur lors de l'ajout du produit");
+        }
+
+        return "resultat";
+    }
+
+    @PostMapping("/DeleteProductForm")
+    public String deleteProductForm(@RequestParam("produitASupprimer") String productIdString, Model model) {
+        try {
+            int productId = Integer.parseInt(productIdString);
+
+
+            if (new DataBaseController().deleteProduit(productId)) {
+                model.addAttribute("status", "success");
+                model.addAttribute("message", "Produit supprimé avec succès");
+            } else {
+                model.addAttribute("status", "error");
+                model.addAttribute("message", "Erreur lors de la suppression du produit");
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            model.addAttribute("status", "error");
+            model.addAttribute("message", "ID de produit invalide");
+        }
+
+        return "resultat";
+    }
+
+    @PostMapping("/EditProductForm")
+    public String editProductForm(@RequestParam("produitAModifier") String productIdString,
+                                  @RequestParam("nomModif") String nom,
+                                  @RequestParam("prixModif") String prix,
+                                  @RequestParam("marqueModif") String marque,
+                                  @RequestParam("descriptionModif") String description,
+                                  @RequestParam("urlPictureModif") String urlPicture,
+                                  Model model) {
+        try {
+            String message;
+            int productId = Integer.parseInt(productIdString);
+
+            Produit produit = new DataBaseController().getProductById(productId);
+
+            if (produit != null) {
+                produit.setNom(nom);
+                produit.setPrix(prix);
+                produit.setMarque(marque);
+                produit.setDescription(description);
+                produit.setUrlPicture(urlPicture);
+
+                if (new DataBaseController().updateProduit(produit)) {
+                    message = "Produit mis à jour avec succès";
+                    model.addAttribute("status", "success");
+                    model.addAttribute("message", message);
+                } else {
+                    message = "Échec de la mise à jour du produit";
+                    model.addAttribute("status", "error");
+                    model.addAttribute("message", message);
+                }
+            } else {
+                message = "Produit non trouvé";
+                model.addAttribute("status", "error");
+                model.addAttribute("message", message);
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            model.addAttribute("status", "error");
+            model.addAttribute("message", "Données de formulaire invalides");
+        }
+
+        return "resultat";
+    }
+
+    @PostMapping("/AddModeratorForm")
+    public String addModeratorForm(@RequestParam("nomMod") String nom,
+                                   @RequestParam("prenom") String prenom,
+                                   @RequestParam("email") String email,
+                                   @RequestParam("motDePasse") String motDePasse,
+                                   @RequestParam(value = "ajoutProduit", defaultValue = "false") boolean ajoutProduit,
+                                   @RequestParam(value = "suppressionProduit", defaultValue = "false") boolean suppressionProduit,
+                                   @RequestParam(value = "modificationProduit", defaultValue = "false") boolean modificationProduit,
+                                   Model model) {
+        try {
+            DataBaseController controller = new DataBaseController();
+            boolean insertionReussie = controller.insertModerator(nom, prenom, email, motDePasse, ajoutProduit, suppressionProduit, modificationProduit);
+
+            if (insertionReussie) {
+                model.addAttribute("status", "success");
+                model.addAttribute("message", "Modérateur ajouté avec succès");
+            } else {
+                model.addAttribute("status", "error");
+                model.addAttribute("message", "Erreur lors de l'ajout du modérateur");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("status", "error");
+            model.addAttribute("message", "Une erreur inattendue s'est produite");
+        }
+
+        return "resultat";
+    }
+
+    @PostMapping("/DeleteModeratorForm")
+    public String deleteModeratorForm(@RequestParam("moderateurASupprimer") int moderatorId, Model model) {
+        try {
+            // Supprimer le modérateur de la base de données
+            if (new DataBaseController().deleteModerator(moderatorId)) {
+                model.addAttribute("status", "success");
+                model.addAttribute("message", "Modérateur supprimé avec succès");
+            } else {
+                model.addAttribute("status", "error");
+                model.addAttribute("message", "Erreur lors de la suppression du modérateur");
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            model.addAttribute("status", "error");
+            model.addAttribute("message", "ID de modérateur invalide");
+        }
+
+        return "resultat";
+    }
+
+    @PostMapping("/EditModeratorForm")
+    public String editModeratorForm(@RequestParam("modAModifier") int moderatorId, @RequestParam(value = "droits[]", required = false) String[] droits, Model model) {
+        try {
+            boolean ajoutProduitModif = false;
+            boolean suppressionProduitModif = false;
+            boolean modificationProduitModif = false;
+
+            if (droits != null) {
+                List<String> droitsList = Arrays.asList(droits);
+
+                if (droitsList.size() > 0) {
+                    ajoutProduitModif = "true".equals(droitsList.get(0)) || "on".equals(droitsList.get(0));
+                }
+
+                if (droitsList.size() > 1) {
+                    suppressionProduitModif = "true".equals(droitsList.get(1)) || "on".equals(droitsList.get(1));
+                }
+
+                if (droitsList.size() > 2) {
+                    modificationProduitModif = "true".equals(droitsList.get(2)) || "on".equals(droitsList.get(2));
+                }
+            }
+
+            Moderateur moderateur = new DataBaseController().getModeratorById(moderatorId);
+
+            if (moderateur != null) {
+                moderateur.setAjouterProduit(ajoutProduitModif);
+                moderateur.setSupprimerProduit(suppressionProduitModif);
+                moderateur.setModifierProduit(modificationProduitModif);
+
+                if (new DataBaseController().updateModerator(moderateur)) {
+                    model.addAttribute("status", "success");
+                    model.addAttribute("message", "Permissions mises à jour avec succès");
+                } else {
+                    model.addAttribute("status", "error");
+                    model.addAttribute("message", "Échec de la mise à jour des permissions");
+                }
+            } else {
+                model.addAttribute("status", "error");
+                model.addAttribute("message", "Modérateur non trouvé");
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            model.addAttribute("status", "error");
+            model.addAttribute("message", "Données de formulaire invalides");
+        }
+
+        return "resultat";
+    }
+
+    @GetMapping("/AdminLogout")
+    public String adminLogout(HttpSession session) {
+        if (session != null) {
+            session.invalidate();
+        }
+
+        return "redirect:/AdminLogin";
+    }
+
 
     @PostMapping("/loginAdminForm")
     public String loginAdminForm(
