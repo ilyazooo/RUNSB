@@ -1,6 +1,7 @@
 package com.example.runsb;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -8,15 +9,56 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class MyController {
+
+
+    @GetMapping("/contact")
+    public String contact(Model model,
+                          HttpSession session){
+
+
+        DataBaseController controller = new DataBaseController();
+
+        boolean isConnected = false;
+        Integer userID = (Integer) session.getAttribute("userID");
+        if (userID != null && userID != -1) {
+            isConnected = true;
+        }
+        model.addAttribute("isConnected", isConnected);
+
+
+        cartDependencies(model, session);
+
+
+        return "contact";
+    }
+
+    @RequestMapping(value = "/contactForm", method = RequestMethod.POST)
+    public String contactForm(
+            @RequestParam("nom") String nom,
+            @RequestParam("email") String email,
+            @RequestParam("numero") String numero,
+            @RequestParam("message") String message,
+    Model model){
+
+
+        Mailing mailing = new Mailing();
+        mailing.envoyerEmailContact(message, nom, email, numero);
+
+
+        model.addAttribute("status", "success");
+        model.addAttribute("message", "Message envoyé avec succès");
+        return "resultatContact";
+    }
+
+
 
     @GetMapping("/")
     public String accueil(@RequestParam(name = "id", required = false) String productId, Model model, HttpSession session) {
@@ -601,6 +643,10 @@ public class MyController {
 
             if (enregistrementReussi) {
 
+                Mailing mailing = new Mailing();
+
+                mailing.envoyerEmailConfirmation(email);
+
                 return "redirect:/login";
             } else {
 
@@ -629,7 +675,7 @@ public class MyController {
 
         DataBaseController databaseController = new DataBaseController();
 
-        creerRecapCommande(session);
+        creerRecapCommande(session, idClient);
 
         Panier panier = (Panier) session.getAttribute("panier");
 
@@ -653,7 +699,7 @@ public class MyController {
         return "redirect:/confirmationCommande";
     }
 
-    void creerRecapCommande(HttpSession session){
+    void creerRecapCommande(HttpSession session, Integer idClient){
         Panier panier1 = (Panier) session.getAttribute("panier");
         DataBaseController controller2 = new DataBaseController();
 
@@ -685,6 +731,8 @@ public class MyController {
                 panierItems.add(panierItem);
             }
         }
+
+        controller2.addFidelitePoints(idClient, total/10);
 
 
         session.setAttribute("recapCommande", panierItems);

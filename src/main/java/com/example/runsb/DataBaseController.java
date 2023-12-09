@@ -1161,4 +1161,61 @@ public class DataBaseController {
         return detailsCommandes;
     }
 
+
+    public void addFidelitePoints(int clientId, int fidelitePoints) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+
+            connection = connectToDatabase();
+            String selectQuery = "SELECT soldeFidelite FROM client WHERE ID_Client = ?";
+            preparedStatement = connection.prepareStatement(selectQuery);
+            preparedStatement.setInt(1, clientId);
+            resultSet = preparedStatement.executeQuery();
+
+            int currentFidelitePoints = 0;
+
+            if (resultSet.next()) {
+                currentFidelitePoints = resultSet.getInt("soldeFidelite");
+            }
+
+
+            int newFidelitePoints = currentFidelitePoints + fidelitePoints;
+
+
+            String updateQuery = "UPDATE client SET soldeFidelite = ? WHERE ID_Client = ?";
+            preparedStatement = connection.prepareStatement(updateQuery);
+            preparedStatement.setInt(1, newFidelitePoints);
+            preparedStatement.setInt(2, clientId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Gérer l'exception (par exemple, journalisation, affichage d'un message d'erreur, etc.)
+        } finally {
+            // Étape 5 : Fermer les ressources (ResultSet, PreparedStatement, Connection)
+            closeResources(resultSet, preparedStatement, connection);
+        }
+    }
+
+
+    private void closeResources(ResultSet resultSet, PreparedStatement preparedStatement, Connection connection) {
+        try {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+    }
+
 }
