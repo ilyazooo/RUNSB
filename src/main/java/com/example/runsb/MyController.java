@@ -60,6 +60,13 @@ public class MyController {
         DataBaseController controller = new DataBaseController();
         List<Produit> catalogue = controller.getFilteredProducts(marque, couleur, genre);
 
+        List<String> couleurs = Arrays.asList("Blanc", "Beige", "Jaune", "Rouge", "Vert", "Bleu", "Marron", "Gris", "Noir");
+        model.addAttribute("couleurs", couleurs);
+
+        List<String> marques = controller.getAllDistinctMarques();
+        model.addAttribute("marques", marques);
+
+
         model.addAttribute("catalogue", catalogue);
 
         return "catalogue";
