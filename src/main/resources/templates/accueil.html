@@ -12,62 +12,86 @@
 
 <div th:replace="header :: header"></div>
 
-<div class="swiper mySwiper relative flex items-center justify-center">
-  <div class="swiper-wrapper">
-    <div class="swiper-slide">
-      <a href="catalogue">
-        <img
-                class="w-full h-full object-center object-cover"
-                src="https://media.gqmagazine.fr/photos/637507a363f0b8424cf4c1d6/16:9/w_1920,c_limit/Montage_Sneakers_V2_2.jpg"
-                alt="image"
-        />
-      </a>
-    </div>
+<div class=" justify-center items-center pt-32 bg-gray-100 px-2">
 
-    <div class="swiper-slide">
-      <a href="produit.jsp?id=18">
-        <img
-                class="w-full h-full object-center object-cover"
-                src="https://img.hardloop.com/image/upload/v1606748997/articles/id-699-8-bonnes-raisons-de-porter-des-chaussettes-en-laine-merinos/les%20chaussettes%20en%20laine%20mérinos%20icebreaker.jpg"
-                alt="image"
-        />
-      </a>
+  <section>
+    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <header class="text-center">
+        <h2 class="text-xl font-bold text-gray-900 sm:text-3xl">Run avec style, avance avec élégance</h2>
+
+        <p class="mx-auto mt-4 max-w-md text-gray-500">
+          Découvrez les dernières sneakers tendance sur Run, votre destination incontournable pour les amateurs de style et de performance. Avec une sélection méticuleuse des modèles les plus en vogue.
+        </p>
+      </header>
+
+      <ul class="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <li>
+          <a href="/catalogue?marque=Adidas" class="group relative block">
+            <img
+                    src="https://img01.ztat.net/article/spp-media-p1/0d2032e616a24b9c84cc341a2b517f49/0adca3d15c4946ef9ecb4e91b7dfadf6.jpg?imwidth=1800&filter=packshot"
+                    alt=""
+                    class="aspect-square w-full object-cover transition duration-500 group-hover:opacity-90"
+            />
+
+            <div class="absolute inset-0 flex flex-col items-start justify-end p-6">
+              <h3 class="text-xl font-medium text-white">Adidas</h3>
+
+              <span
+                      class="mt-1.5 inline-block bg-black px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+              >
+                  Shop Now
+                </span>
+            </div>
+          </a>
+        </li>
+
+        <li>
+          <a href="/catalogue?marque=Nike" class="group relative block">
+            <img
+                    src="https://images.asos-media.com/products/nike-air-force-1-baskets-marron-et-sesame/202880740-2?$n_640w$&wid=513&fit=constrain"
+                    alt=""
+                    class="aspect-square w-full object-cover transition duration-500 group-hover:opacity-90"
+            />
+
+            <div class="absolute inset-0 flex flex-col items-start justify-end p-6">
+              <h3 class="text-xl font-medium text-white">Nike</h3>
+
+              <span
+                      class="mt-1.5 inline-block bg-black px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+              >
+                  Shop Now
+                </span>
+            </div>
+          </a>
+        </li>
+
+        <li class="lg:col-span-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          <a href="/catalogue?marque=New+Balance" class="group relative block">
+            <img
+                    src="https://cloud.sneakerdistrict.com/products/16706/u9060gry-grey_phpnfxfgD-800.jpg"
+                    alt=""
+                    class="aspect-square w-full object-cover transition duration-500 group-hover:opacity-90"
+            />
+
+            <div class="absolute inset-0 flex flex-col items-start justify-end p-6">
+              <h3 class="text-xl font-medium text-white">New Balance</h3>
+
+              <span
+                      class="mt-1.5 inline-block bg-black px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+              >
+                  Shop Now
+                </span>
+            </div>
+          </a>
+        </li>
+      </ul>
     </div>
-    <div class="swiper-slide">
-      <a href="produit.jsp?id=15">
-        <img
-                class="w-full h-full object-center object-cover"
-                src="https://kikikickz.com/cdn/shop/articles/10-sneakers-a-saisir-pendant-nos-soldes-518234_800x.progressive.webp.jpg?v=1696270866"
-                alt="image"
-        />
-      </a>
-    </div>
-  </div>
-  <div class="swiper-button-next"></div>
-  <div class="swiper-button-prev"></div>
-  <div class="swiper-pagination"></div>
+  </section>
+
+
 </div>
 
-<!-- Swiper JS -->
-<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-<script>
-  var swiper = new Swiper(".mySwiper", {
-    cssMode: true,
-    loop : true,
-    navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev",
-    },
-    autoplay: {
-      delay: 3500,
-    },
-    pagination: {
-      el: ".swiper-pagination",
-    },
-    mousewheel: true,
-    keyboard: true,
-  });
-</script>
+<div th:replace="footer :: footer"></div>
 
 
 </body>
