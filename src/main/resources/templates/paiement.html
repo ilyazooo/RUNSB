@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run</title>
+    <link href="https://unpkg.com/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+
+
+
+<form action="/confirmationCommande" method="get" >
+    <div class="min-h-screen bg-gray-500 flex justify-center items-center">
+        <div class="absolute w-60 h-60 rounded-xl bg-gray-900 -top-5 -left-16 z-0 transform rotate-45 hidden md:block">
+        </div>
+        <div class="absolute w-48 h-48 rounded-xl bg-gray-900 -bottom-6 -right-10 transform rotate-12 hidden md:block">
+        </div>
+        <div class="py-12 px-12 bg-white rounded-2xl shadow-xl z-20">
+            <div class="flex flex-col items-center justify-center">
+                <h1 class="text-3xl font-bold text-center mb-4 cursor-pointer">Paiement de la commande</h1>
+                <div class="inline-flex items-center text-base font-semibold text-black" th:text="${'Montant total de la commande : ' + totalCommande + ' Euros'}"></div>
+                <p></p>
+            </div>
+
+            <div class="max-w-4xl mx-auto z-4 mb-2" id="erreur" style="display: none;">
+                <div class="bg-red-50 border-l-8 border-red-900">
+                    <div class="flex items-center">
+                        <div class="p-2">
+                            <div class="flex items-center">
+
+                                <div class="ml-2">
+                                    <svg id="SVG" class="h-8 w-8 text-red-900 mr-2 cursor-pointer"
+                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              stroke-width="2"
+                                              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                </button>
+                                <p class="px-6 py-4 text-red-900 font-semibold text-lg">Erreur lors du paiement.</p>
+                            </div>
+                            <div class="px-16 mb-4">
+                                <li class="text-md font-bold text-red-500 text-sm">Veuillez vérifier les champs.</li>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="space-y-4">
+
+                <input type="text" id="nomCarte" name="nomCarte"placeholder="Nom sur la carte" class="block text-sm py-3 px-4 rounded-lg w-full border outline-none" required>
+
+                <input type="text" id="numeroCarte" name="numeroCarte" placeholder="Numéro de carte" class="block text-sm py-3 px-4 rounded-lg w-full border outline-none" pattern="\d{16}"required>
+
+                <input type="text" id="dateExpiration" name="dateExpiration" placeholder="MM/YY" class="block text-sm py-3 px-4 rounded-lg w-full border outline-none" pattern="\d{2}/\d{2}" required>
+
+                <input type="text" id="cvc" name="cvc" placeholder="CVC" class="block text-sm py-3 px-4 rounded-lg w-full border outline-none" pattern="\d{3}" required>
+
+            </div>
+            <div class="text-center mt-6">
+                <button class="py-3 w-64 text-xl text-white bg-gray-900 rounded-2xl">Payer</button>
+
+
+            </div>
+        </div>
+        <div class="w-40 h-40 absolute bg-gray-900 rounded-full top-0 right-12 hidden md:block"></div>
+        <div class="w-20 h-40 absolute bg-gray-900 rounded-full bottom-20 left-10 transform rotate-45 hidden md:block">
+        </div>
+    </div>
+</form>
+
+
+
+
+</body>
+</html>
+

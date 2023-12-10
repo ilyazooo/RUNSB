@@ -805,6 +805,20 @@ public class MyController {
         return "profil";
     }
 
+    @GetMapping("/paiement")
+    public String afficherPaiement(Model model, HttpSession session) {
+        // Récupérez les détails de la commande à partir de la session
+        List<PanierItem> panierItems = (List<PanierItem>) session.getAttribute("recapCommande");
+        int totalCommande = (Integer) session.getAttribute("totalCommande");
+
+        model.addAttribute("panierItems", panierItems);
+        model.addAttribute("totalCommande", totalCommande);
+
+        // Affichez la page de paiement
+        return "paiement";
+    }
+
+
 
 
 
