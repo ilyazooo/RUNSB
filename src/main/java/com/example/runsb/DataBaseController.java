@@ -1218,4 +1218,31 @@ public class DataBaseController {
         }
     }
 
+    public boolean getVerifsolde(int userId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = connectToDatabase();
+
+            String query = "SELECT verifSolde FROM client WHERE ID_Client = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userId);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getBoolean("verifsolde");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(resultSet, preparedStatement, connection);
+        }
+
+        return false;
+    }
+
 }

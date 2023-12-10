@@ -748,7 +748,6 @@ public class MyController {
 
 
 
-
         model.addAttribute("panierItems", panierItems);
         model.addAttribute("totalCommande", totalCommande);
 
@@ -807,24 +806,24 @@ public class MyController {
 
     @GetMapping("/paiement")
     public String afficherPaiement(Model model, HttpSession session) {
-        // Récupérez les détails de la commande à partir de la session
+        DataBaseController dataBaseController = new DataBaseController();
+        Integer idClient = (Integer) session.getAttribute("userID");
         List<PanierItem> panierItems = (List<PanierItem>) session.getAttribute("recapCommande");
         int totalCommande = (Integer) session.getAttribute("totalCommande");
 
         model.addAttribute("panierItems", panierItems);
         model.addAttribute("totalCommande", totalCommande);
+        boolean verifsolde =  dataBaseController.getVerifsolde(idClient);
 
-        // Affichez la page de paiement
+        model.addAttribute("verifsolde", verifsolde);
+
         return "paiement";
     }
 
-
-
-
-
-
-
-
-
-
+    @GetMapping("/soldeInsuffisant")
+    public String soldeInsuffisant() {
+        return "soldeInsuffisant";
+    }
 }
+
+
