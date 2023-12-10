@@ -302,7 +302,7 @@ public class DataBaseController {
                 preparedStatement.setString(3, produit.getDescription());
                 preparedStatement.setString(4, produit.getPrix());
                 preparedStatement.setString(5, produit.getUrlPicture());
-                preparedStatement.setString(6, produit.getMotCles());
+                preparedStatement.setString(6, produit.getMotsCles());
                 preparedStatement.setInt(7, produit.getId());
 
                 // Exécuter la mise à jour
