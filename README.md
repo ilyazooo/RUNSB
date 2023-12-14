@@ -11,7 +11,7 @@
 ### Installation
 Pour faire fonctionner notre application SpringBoot, suivez les étapes suivantes :
 
-## Étape 1 : Get project from VCS
+## Étape 1 : Récupérer le projet avec VCS
 1. Ouvrez votre IDE préféré (par exemple, IntelliJ IDEA, Eclipse, VSCode).
 2. Sélectionnez l'option pour cloner un projet depuis un système de contrôle de version (VCS).
 3. Clonez le dépôt dans un répertoire local de votre choix.
