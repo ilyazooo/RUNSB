@@ -149,14 +149,16 @@ public class DataBaseController {
         try {
             connection = connectToDatabase();
             if (connection != null) {
-                String query = "SELECT * FROM administrateur WHERE email = ? AND motDePasse = ?";
+                String query = "SELECT motDePasse FROM administrateur WHERE email = ?";
                 preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, email);
-                preparedStatement.setString(2, motDePasse);
                 resultSet = preparedStatement.executeQuery();
 
-                // Si la requête renvoie des résultats, alors les informations d'identification sont correctes
-                return resultSet.next();
+                if (resultSet.next()) {
+                    String motDePasseHashDansLaBase = resultSet.getString("motDePasse");
+
+                    return BCrypt.checkpw(motDePasse, motDePasseHashDansLaBase);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -178,7 +180,6 @@ public class DataBaseController {
             closeConnection(connection);
         }
 
-        // Si la requête ne renvoie pas de résultats ou s'il y a une erreur, les informations d'identification sont incorrectes
         return false;
     }
 
@@ -190,14 +191,16 @@ public class DataBaseController {
         try {
             connection = connectToDatabase();
             if (connection != null) {
-                String query = "SELECT * FROM moderateur WHERE email = ? AND motDePasse = ?";
+                String query = "SELECT motDePasse FROM moderateur WHERE email = ?";
                 preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, email);
-                preparedStatement.setString(2, motDePasse);
                 resultSet = preparedStatement.executeQuery();
 
-                // Si la requête renvoie des résultats, alors les informations d'identification sont correctes
-                return resultSet.next();
+                if (resultSet.next()) {
+                    String motDePasseHashDansLaBase = resultSet.getString("motDePasse");
+
+                    return BCrypt.checkpw(motDePasse, motDePasseHashDansLaBase);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

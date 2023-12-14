@@ -411,6 +411,7 @@ public class MyController {
                                   @RequestParam("marqueModif") String marque,
                                   @RequestParam("descriptionModif") String description,
                                   @RequestParam("urlPictureModif") String urlPicture,
+                                  @RequestParam("motsClesModif") String motsCles,
                                   Model model) {
         try {
             String message;
@@ -424,6 +425,7 @@ public class MyController {
                 produit.setMarque(marque);
                 produit.setDescription(description);
                 produit.setUrlPicture(urlPicture);
+                produit.setMotsCles(motsCles);
 
                 if (new DataBaseController().updateProduit(produit)) {
                     message = "Produit mis à jour avec succès";
