@@ -20,7 +20,7 @@ public class DataBaseController {
 
 
     public Connection connectToDatabase() {
-        String dbUrl = "jdbc:mysql://localhost:8889/rundb"; // Mettez à jour avec votre propre URL de base de données.
+        String dbUrl = "jdbc:mysql://localhost:3306/rundb"; // Mettez à jour avec votre propre URL de base de données.
         String dbUser = "root";
         String dbPassword = "root";
 
