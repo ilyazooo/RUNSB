@@ -770,6 +770,8 @@ public class MyController {
         if (userID != null && userID != -1) {
             isConnected = true;
             client = dataBaseController.getClientById(userID);
+        } else {
+            return "login";
         }
 
         if (isConnected) {
