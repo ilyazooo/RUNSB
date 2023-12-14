@@ -33,24 +33,24 @@ Pour faire fonctionner notre application SpringBoot, suivez les étapes suivante
 
 1. Catalogue de produits :
 
-Une liste complète de tous les sneakers disponibles, avec des options de filtrage par marque, taille, couleur.
+- Une liste complète de tous les sneakers disponibles, avec des options de filtrage par marque, taille, couleur.
 
 2. Fiches produits détaillées :
 
-Un processus de commande en plusieurs étapes avec facturation et de paiement en ligne.
+- Un processus de commande en plusieurs étapes avec facturation et de paiement en ligne.
 
 3. Panier d'achat :
 
-Une fonctionnalité permettant aux utilisateurs d'ajouter des articles à leur panier, de supprimer des articles et de visualiser le total avant de passer à la caisse.
+- Une fonctionnalité permettant aux utilisateurs d'ajouter des articles à leur panier, de supprimer des articles et de visualiser le total avant de passer à la caisse.
 
 4. Comptes utilisateurs : 
 
-La possibilité pour les clients de créer des comptes pour suivre leurs commandes
+- La possibilité pour les clients de créer des comptes pour suivre leurs commandes
  
 5. Recherche avancée :
 
-Un moteur de recherche intégré permettant aux clients de trouver rapidement les produits qu'ils cherchent.
+- Un moteur de recherche intégré permettant aux clients de trouver rapidement les produits qu'ils cherchent.
 
 6. Interface d'administration :
 
- Un tableau de bord pour les administrateurs pour gérer les produits
+- Un tableau de bord pour les administrateurs pour gérer les produits
