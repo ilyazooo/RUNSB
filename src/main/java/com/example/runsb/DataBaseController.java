@@ -13,13 +13,16 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.util.Random;
+import org.mindrot.jbcrypt.BCrypt;
+
 public class DataBaseController {
 
 
     public Connection connectToDatabase() {
         String dbUrl = "jdbc:mysql://localhost:3306/rundb"; // Mettez à jour avec votre propre URL de base de données.
         String dbUser = "root";
-        String dbPassword = "";
+        String dbPassword = "root";
 
         Connection connection = null;
 
@@ -424,12 +427,13 @@ public class DataBaseController {
         try {
             connection = connectToDatabase();
             if (connection != null) {
+                String motDePasseHash = BCrypt.hashpw(motDePasse, BCrypt.gensalt());
                 String query = "INSERT INTO moderateur(nom, prenom, email, motDePasse, ajouterProduit, supprimerProduit, modifierProduit) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, nom);
                 preparedStatement.setString(2, prenom);
                 preparedStatement.setString(3, email);
-                preparedStatement.setString(4, motDePasse);
+                preparedStatement.setString(4, motDePasseHash);
                 preparedStatement.setBoolean(5, ajouterProduit);
                 preparedStatement.setBoolean(6, supprimerProduit);
                 preparedStatement.setBoolean(7, modifierProduit);
@@ -518,41 +522,6 @@ public class DataBaseController {
             }
             closeConnection(connection);
         }
-        return false;
-    }
-
-
-    public boolean insertClient(String nom, String prenom, String email, String motDePasse, boolean verifSolde) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            connection = connectToDatabase();
-            if (connection != null) {
-                String query = "INSERT INTO client (nom, prenom, email, motDePasse, verifSolde) VALUES (?, ?, ?, ?, ?)";
-                preparedStatement = connection.prepareStatement(query);
-                preparedStatement.setString(1, nom);
-                preparedStatement.setString(2, prenom);
-                preparedStatement.setString(3, email);
-                preparedStatement.setString(4, motDePasse);
-                preparedStatement.setBoolean(5, verifSolde);
-                int rowsAffected = preparedStatement.executeUpdate();
-
-                return rowsAffected > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            closeConnection(connection);
-        }
-
         return false;
     }
 
@@ -795,16 +764,15 @@ public class DataBaseController {
     }
 
     public boolean checkLogin(String email, String motDePasse) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM client WHERE email = ? AND motDePasse = ?";
+        String sql = "SELECT motDePasse FROM client WHERE email = ?";
         try (Connection conn = connectToDatabase();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, email);
-            preparedStatement.setString(2, motDePasse);
-
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    int count = resultSet.getInt(1);
-                    return count > 0;
+                    String motDePasseHash = resultSet.getString("motDePasse");
+
+                    return BCrypt.checkpw(motDePasse, motDePasseHash);
                 }
             }
         }
@@ -840,11 +808,11 @@ public class DataBaseController {
             ResultSet resultSet = selectStatement.executeQuery();
 
             if (resultSet.next() && resultSet.getInt(1) == 0) {
-
+                String motDePasseHash = BCrypt.hashpw(motDePasse, BCrypt.gensalt());
                 insertStatement.setString(1, nom);
                 insertStatement.setString(2, prenom);
                 insertStatement.setString(3, email);
-                insertStatement.setString(4, motDePasse);
+                insertStatement.setString(4, motDePasseHash);
 
 
                 int rowsAffected = insertStatement.executeUpdate();
@@ -1220,30 +1188,9 @@ public class DataBaseController {
     }
 
     public boolean getVerifsolde(int userId) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            connection = connectToDatabase();
-
-            String query = "SELECT verifSolde FROM client WHERE ID_Client = ?";
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, userId);
-
-            resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                return resultSet.getBoolean("verifsolde");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeResources(resultSet, preparedStatement, connection);
-        }
-
-        return false;
+        Random rand = new Random();
+        int number = rand.nextInt(4);
+        return number != 0;
     }
 
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 09, 2023 at 01:18 PM
+-- Generation Time: Dec 14, 2023 at 10:31 PM
 -- Server version: 5.7.24
 -- PHP Version: 8.0.1
 
@@ -40,7 +40,7 @@ CREATE TABLE `administrateur` (
 --
 
 INSERT INTO `administrateur` (`ID_ADMINISTRATEUR`, `nom`, `prenom`, `motDePasse`, `email`) VALUES
-(1, 'ADMIN', 'ADMIN', 'root', 'runadmin@gmail.com');
+(1, 'ADMIN', 'ADMIN', '$2a$10$8b0oQ3lxjKYx1il.kHc/BekksEy.fkiqy00FzeIFf/4jCz7qqwV0q', 'runadmin@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -58,13 +58,6 @@ CREATE TABLE `client` (
   `verifSolde` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `client`
---
-
-INSERT INTO `client` (`ID_Client`, `nom`, `prenom`, `email`, `motDePasse`, `soldeFidelite`, `verifSolde`) VALUES
-(1, 'Tadjer', 'Yenni', 'yenni.tadjer@gmail.com', 'run123', 0, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -77,14 +70,6 @@ CREATE TABLE `commande` (
   `date_commande` datetime NOT NULL,
   `statut` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `commande`
---
-
-INSERT INTO `commande` (`ID_Commande`, `ID_Client`, `date_commande`, `statut`) VALUES
-(1, 1, '2023-12-09 13:30:59', 'en attente'),
-(2, 1, '2023-12-09 13:33:55', 'en attente');
 
 -- --------------------------------------------------------
 
@@ -99,14 +84,6 @@ CREATE TABLE `details_commande` (
   `ID_Variante` int(11) NOT NULL,
   `quantite` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `details_commande`
---
-
-INSERT INTO `details_commande` (`ID_Detail`, `ID_Commande`, `ID_Produit`, `ID_Variante`, `quantite`) VALUES
-(1, 2, 3, 12, 1),
-(2, 2, 3, 15, 1);
 
 -- --------------------------------------------------------
 
@@ -124,14 +101,6 @@ CREATE TABLE `moderateur` (
   `supprimerProduit` tinyint(1) DEFAULT NULL,
   `modifierProduit` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `moderateur`
---
-
-INSERT INTO `moderateur` (`ID_Moderateur`, `nom`, `prenom`, `email`, `motDePasse`, `ajouterProduit`, `supprimerProduit`, `modifierProduit`) VALUES
-(7, 'Oumlil', 'Ilyass', 'ilyass@gmail.com', 'ilyass', 1, 0, 0),
-(8, 'azfazfazfazzaerraz', 'azfazfazf', 'ilkalzedaz@hotmail.fr', 'fazfazfazfaz', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -383,13 +352,13 @@ ALTER TABLE `client`
 -- AUTO_INCREMENT for table `commande`
 --
 ALTER TABLE `commande`
-  MODIFY `ID_Commande` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID_Commande` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `details_commande`
 --
 ALTER TABLE `details_commande`
-  MODIFY `ID_Detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID_Detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `moderateur`
