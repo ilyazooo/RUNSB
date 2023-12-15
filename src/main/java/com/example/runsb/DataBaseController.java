@@ -1192,7 +1192,7 @@ public class DataBaseController {
 
     public boolean getVerifsolde(int userId) {
         Random rand = new Random();
-        int number = rand.nextInt(4);
+        int number = rand.nextInt(6);
         return number != 0;
     }
 
