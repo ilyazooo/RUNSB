@@ -64,7 +64,7 @@
 
             </div>
             <div class="text-center mt-6">
-                <button class="py-3 w-64 text-xl text-white bg-gray-900 rounded-2xl">Payer</button>
+                <button id="payButton" class="py-3 w-64 text-xl text-white bg-gray-900 rounded-2xl">Payer</button>
 
 
             </div>
@@ -78,16 +78,24 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var verifsolde = [[${verifsolde}]];
-        document.getElementById('paymentForm').addEventListener('submit', function (event) {
+        var payButton = document.getElementById('payButton');
+        var paymentForm = document.getElementById('paymentForm');
+
+        paymentForm.addEventListener('submit', function (event) {
             event.preventDefault();
 
-            if ((verifsolde != 0) && (verifsolde != null)) {
-                window.location.href = "/confirmationCommande";
 
-            } else {
+            payButton.disabled = true;
+            payButton.style.backgroundColor = '#CCCCCC';
 
-                window.location.href = "/soldeInsuffisant";
-            }
+
+            setTimeout(function () {
+                if ((verifsolde != 0) && (verifsolde != null)) {
+                    window.location.href = "/confirmationCommande";
+                } else {
+                    window.location.href = "/soldeInsuffisant";
+                }
+            }, 5000);
         });
     });
 </script>

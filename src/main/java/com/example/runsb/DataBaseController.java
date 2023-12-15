@@ -1241,4 +1241,51 @@ public class DataBaseController {
         }
     }
 
+
+    public String getEmailByIdClient(int idClient) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Établir la connexion à la base de données
+            connection = connectToDatabase();
+
+            // Requête SQL pour récupérer l'e-mail à partir de l'ID_Client
+            String sql = "SELECT email FROM client WHERE ID_Client = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, idClient);
+
+            // Exécuter la requête et récupérer le résultat
+            resultSet = preparedStatement.executeQuery();
+
+            // Vérifier si une ligne a été trouvée
+            if (resultSet.next()) {
+                return resultSet.getString("email");
+            } else {
+                // Ajustez cela selon vos besoins. Par exemple, retournez null ou une chaîne vide.
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Gérer les exceptions, enregistrer ou traiter selon vos besoins
+            return null;
+        } finally {
+            // Fermer les ressources (connexion, déclaration, résultat, etc.)
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

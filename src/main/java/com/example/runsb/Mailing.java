@@ -60,6 +60,48 @@ public class Mailing {
         }
     }
 
+    void envoyerEmailConfirmationCommande(String destinataire, String recap) {
+
+        String utilisateur = "run.customerservice@outlook.fr";
+        String motDePasse = "Run123run123";
+
+
+        String sujet = "Récapitulatif de votre commande RUN";
+
+
+
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "smtp.office365.com");
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+
+        // Session SMTP
+        Session session = Session.getInstance(properties, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(utilisateur, motDePasse);
+            }
+        });
+
+        try {
+            // Création du message
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(utilisateur));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinataire));
+            message.setSubject(sujet);
+            message.setText(recap);
+
+            // Envoi du message
+            Transport.send(message);
+
+            System.out.println("E-mail de confirmation envoyé avec succès.");
+
+        } catch (MessagingException e) {
+            // Gérez l'exception de manière appropriée (enregistrez-la, renvoyez une erreur, etc.)
+            e.printStackTrace();
+        }
+    }
+
 
     void envoyerEmailContact(String message1, String name, String mail, String numero) {
 

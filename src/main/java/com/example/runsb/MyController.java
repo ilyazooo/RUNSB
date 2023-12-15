@@ -719,6 +719,8 @@ public class MyController {
                 int idProduit = databaseController.getProductIdFromVarianteId(idVariante);
 
                 databaseController.creerDetailCommande(idCommande, idProduit, idVariante, quantite);
+
+
             }
         }
 
@@ -740,6 +742,8 @@ public class MyController {
 
         int total = 0;
 
+        StringBuilder emailContent = new StringBuilder();
+
         for (Map.Entry<Integer, Integer> entry : panier1.getContenu().entrySet()) {
             int idVariante = entry.getKey();
             int quantite = entry.getValue();
@@ -754,6 +758,10 @@ public class MyController {
                 int prix = quantite * Integer.parseInt(produit2.getPrix());
                 total += prix;
 
+                emailContent.append("Produit : ").append(produit2.getNom()).append("\n");
+                emailContent.append("Pointure : ").append(pointure).append("\n");
+                emailContent.append("Quantité : ").append(quantite).append("\n");
+                emailContent.append("Prix : ").append(prix).append("\n\n");
 
                 PanierItem panierItem = new PanierItem(idVariante, urlPicture, produit2.getNom(), pointure, quantite, prix);
                 panierItems.add(panierItem);
@@ -762,6 +770,17 @@ public class MyController {
 
         controller2.addFidelitePoints(idClient, total/10);
 
+
+        emailContent.append("Total : ").append(total).append("\n");
+
+        emailContent.append("Merci pour votre commande et à bientot").append("\n");
+
+
+        String emailContentString = emailContent.toString();
+        String mailClient = controller2.getEmailByIdClient(idClient);
+
+        Mailing mailing = new Mailing();
+        mailing.envoyerEmailConfirmationCommande(mailClient, emailContentString);
 
         session.setAttribute("recapCommande", panierItems);
         session.setAttribute("totalCommande", total);
