@@ -1196,4 +1196,49 @@ public class DataBaseController {
         return number != 0;
     }
 
+
+    public boolean insertStock(String productId, String pointure, int stock) {
+        Connection connection = null;
+        PreparedStatement deleteStatement = null;
+        PreparedStatement insertStatement = null;
+
+        try {
+            connection = connectToDatabase();
+
+
+            String deleteSql = "DELETE FROM variantes_produit WHERE ID_Produit = ? AND pointure = ?";
+            deleteStatement = connection.prepareStatement(deleteSql);
+            deleteStatement.setString(1, productId);
+            deleteStatement.setString(2, pointure);
+            deleteStatement.executeUpdate();
+
+
+            String insertSql = "INSERT INTO variantes_produit (ID_Produit, pointure, stock) VALUES (?, ?, ?)";
+            insertStatement = connection.prepareStatement(insertSql);
+            insertStatement.setString(1, productId);
+            insertStatement.setString(2, pointure);
+            insertStatement.setInt(3, stock);
+            int lignesAffectees = insertStatement.executeUpdate();
+
+            return lignesAffectees > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (deleteStatement != null) {
+                    deleteStatement.close();
+                }
+                if (insertStatement != null) {
+                    insertStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

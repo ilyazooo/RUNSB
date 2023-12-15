@@ -46,7 +46,7 @@ public class MyController {
             @RequestParam("email") String email,
             @RequestParam("numero") String numero,
             @RequestParam("message") String message,
-    Model model){
+            Model model){
 
 
         Mailing mailing = new Mailing();
@@ -331,14 +331,18 @@ public class MyController {
 
     @GetMapping("/getProductDetails")
     public ResponseEntity<Produit> getProductDetails(@RequestParam("productId") String productId) {
+        try {
+            int productIdNotString = Integer.parseInt(productId);
+            Produit produit = new DataBaseController().getProductById(productIdNotString);
 
-        int productIdNotString = Integer.parseInt(productId);
-        Produit produit = new DataBaseController().getProductById(productIdNotString);
+            if (produit != null) {
+                return new ResponseEntity<>(produit, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (NumberFormatException e) {
 
-        if (produit != null) {
-            return new ResponseEntity<>(produit, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -381,6 +385,7 @@ public class MyController {
 
         return "resultat";
     }
+
 
     @PostMapping("/DeleteProductForm")
     public String deleteProductForm(@RequestParam("produitASupprimer") String productIdString, Model model) {
@@ -445,6 +450,27 @@ public class MyController {
             e.printStackTrace();
             model.addAttribute("status", "error");
             model.addAttribute("message", "Données de formulaire invalides");
+        }
+
+        return "resultat";
+    }
+
+    @PostMapping("/AddStockForm")
+    public String addStockForm(@RequestParam("produitAModifier2") String productIdString,
+                               @RequestParam("pointureAjout") String pointure,
+                               @RequestParam("stockAjout") String stock,
+                               Model model) {
+
+        int stockInt = Integer.parseInt(stock);
+        boolean insertionReussie = new DataBaseController().insertStock(productIdString, pointure, stockInt);
+        System.out.println("id : "+productIdString+" pointure : "+pointure+" stockAjout : "+stock);
+
+        if (insertionReussie) {
+            model.addAttribute("status", "success");
+            model.addAttribute("message", "Stock ajouté/modifié avec succès");
+        } else {
+            model.addAttribute("status", "error");
+            model.addAttribute("message", "Erreur lors de l'ajout du stock");
         }
 
         return "resultat";
@@ -602,29 +628,29 @@ public class MyController {
             HttpSession session
     ) throws SQLException {
         DataBaseController databaseController = new DataBaseController();
-            if (databaseController.checkLogin(email, motDePasse)) {
+        if (databaseController.checkLogin(email, motDePasse)) {
 
-                int userID = databaseController.getUserIdFromDatabase(email);
+            int userID = databaseController.getUserIdFromDatabase(email);
 
-                if (userID != -1) {
-                    session.setAttribute("userID", userID);
-                    model.addAttribute("catalogue", databaseController.getCatalogue());
+            if (userID != -1) {
+                session.setAttribute("userID", userID);
+                model.addAttribute("catalogue", databaseController.getCatalogue());
 
-                    model.addAttribute("userID", userID);
-                    model.addAttribute("catalogue", databaseController.getCatalogue());
+                model.addAttribute("userID", userID);
+                model.addAttribute("catalogue", databaseController.getCatalogue());
 
 
-                    return "redirect:/catalogue";
-                } else {
-                    model.addAttribute("erreur", "L'authentification a échoué.");
-                    return "login";
-                }
+                return "redirect:/catalogue";
             } else {
-
                 model.addAttribute("erreur", "L'authentification a échoué.");
-
                 return "login";
             }
+        } else {
+
+            model.addAttribute("erreur", "L'authentification a échoué.");
+
+            return "login";
+        }
 
     }
 
@@ -638,7 +664,7 @@ public class MyController {
             Model model
     ) {
         DataBaseController databaseController = new DataBaseController();
-        
+
         if (motDePasse.equals(motDePasseConfirmation)) {
 
             boolean enregistrementReussi = databaseController.register(prenom, nom, email, motDePasse);
